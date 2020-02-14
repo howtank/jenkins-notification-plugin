@@ -8,4 +8,4 @@ This Jenkins plugin allows you to send Howtank Strean notification as a post bui
 
 ## Prerequisites
 
-A Jenkins user has to be created in Howtank and a set of credentials have to be defined.
+A user to be used by Jenkins has to be created in Howtank and a set of credentials have to be defined.
