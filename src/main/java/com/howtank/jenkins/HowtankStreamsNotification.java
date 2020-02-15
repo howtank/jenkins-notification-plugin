@@ -215,6 +215,8 @@ public class HowtankStreamsNotification extends Notifier implements SimpleBuildS
             boolean sendNotificationFlag = checkPipelineFlag(run);
 
             if (sendNotificationFlag) {
+                log.info("Sending notification to Howtank for this build");
+
                 howtankStreamService.sendNotification(this.extractMessageFromJobExecution(run), this.streamId);
             } else {
                 log.info("Notification will not be sent to Howtank for this build");
