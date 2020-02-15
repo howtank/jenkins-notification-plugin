@@ -216,6 +216,8 @@ public class HowtankStreamsNotification extends Notifier implements SimpleBuildS
 
             if (sendNotificationFlag) {
                 howtankStreamService.sendNotification(this.extractMessageFromJobExecution(run), this.streamId);
+            } else {
+                log.info("Notification will not be sent to Howtank for this build");
             }
         }
     }
