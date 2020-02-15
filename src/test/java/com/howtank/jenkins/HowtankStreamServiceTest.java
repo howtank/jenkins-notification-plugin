@@ -33,7 +33,7 @@ public class HowtankStreamServiceTest {
     @Test
     public void buildHowtankApiCommandQuery() {
         try {
-            assertEquals("command=add_stream_message&stream_id="+A_STREAM_ID+"&local_id=0&type=group_chat&content=Hello+World%21",
+            assertEquals("command=add_stream_message&stream_id="+A_STREAM_ID+"&local_id=0&mode=expert&type=group_chat&content=Hello+World%21",
                     this.howtankStreamService.buildHowtankApiCommandQuery(A_STREAM_ID, "Hello World!"));
         } catch (URISyntaxException e) {
             fail(e.getMessage());
