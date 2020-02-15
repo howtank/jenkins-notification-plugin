@@ -26,6 +26,8 @@ import javax.annotation.Nonnull;
 public class HowtankStreamsNotification extends Recorder implements SimpleBuildStep {
     private final String streamId;
     private final String message;
+    private final String accessToken;
+
     private boolean notifyAborted;
     private boolean notifyFailure;
     private boolean notifyNotBuilt;
@@ -34,21 +36,22 @@ public class HowtankStreamsNotification extends Recorder implements SimpleBuildS
     private boolean notifyBackToNormal;
 
     @DataBoundConstructor
-    public HowtankStreamsNotification(String streamId, String message) {
+    public HowtankStreamsNotification(String streamId, String message, String accessToken) {
         this.streamId = streamId;
         this.message = message;
+        this.accessToken = accessToken;
     }
 
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-        HowtankStreamService howtankStreamService = new HowtankStreamService(this, listener, null);
+        HowtankStreamService howtankStreamService = new HowtankStreamService(this, listener, null, accessToken);
         performAction(build, howtankStreamService.checkWhetherToSend(build), howtankStreamService);
         return true;
     }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) {
-        HowtankStreamService howtankStreamService = new HowtankStreamService(this, listener, workspace);
+        HowtankStreamService howtankStreamService = new HowtankStreamService(this, listener, workspace, accessToken);
         performAction(run, howtankStreamService.checkPipelineFlag(run), howtankStreamService);
     }
 

@@ -19,6 +19,10 @@
             <f:textbox />
         </f:entry>
 
+        <f:entry title="Access Token" field="accessToken">
+            <f:password />
+        </f:entry>
+
         <f:entry title="Notify Aborted" field="notifyAborted">
             <f:checkbox/>
         </f:entry>

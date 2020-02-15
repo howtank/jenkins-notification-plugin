@@ -47,11 +47,22 @@
 
     <repositories>
         <repository>
+            <id>howtank-artifacts</id>
+            <url>https://artifacts.howtank.com/repository/howtank/</url>
+        </repository>
+
+        <repository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
+        <pluginRepository>
+            <id>howtank-artifacts</id>
+            <name>Howtank custom</name>
+            <url>https://artifacts.howtank.com/repository/howtank/</url>
+        </pluginRepository>
+
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>

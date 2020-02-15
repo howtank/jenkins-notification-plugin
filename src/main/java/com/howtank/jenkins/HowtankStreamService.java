@@ -6,6 +6,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -16,18 +17,14 @@ import static io.restassured.RestAssured.with;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Log
+@RequiredArgsConstructor
 public class HowtankStreamService {
     private static final String HOWTANK_BASE_API_URL = "https://www.howtank.com/api/v4";
 
-    private HowtankStreamsNotification howtankStreamsNotification;
-    private TaskListener taskListener;
-    private FilePath ws;
-
-    public HowtankStreamService(HowtankStreamsNotification howtankStreamsNotification, TaskListener taskListener, FilePath ws) {
-        this.howtankStreamsNotification = howtankStreamsNotification;
-        this.taskListener = taskListener;
-        this.ws = ws;
-    }
+    private final HowtankStreamsNotification howtankStreamsNotification;
+    private final TaskListener taskListener;
+    private final FilePath ws;
+    private final String accessToken;
 
     public Boolean sendNotification(Run run) {
 
@@ -64,6 +61,7 @@ public class HowtankStreamService {
                 .contentType(ContentType.JSON)
                 .queryParam(queryParam)
                 .urlEncodingEnabled(false)
+                .header("Authorization", "Bearer " + accessToken)
                 .body(json)
             .log().all()
             .post();
@@ -97,41 +95,51 @@ public class HowtankStreamService {
     public boolean checkWhetherToSend(Run build) {
         boolean result = false;
 
-        if(build != null && build.getResult() != null) {
-            if(howtankStreamsNotification.isNotifyAborted()
-                    && Result.ABORTED.toString().equalsIgnoreCase(build.getResult().toString())) {
+        if(build != null) {
+            Result currentBuildResult = build.getResult();
+            Run previousBuild = build.getPreviousBuild();
+            Result previousBuildResult = null;
 
-                result = true;
+            if (previousBuild != null) {
+                previousBuildResult = previousBuild.getResult();
+            }
 
-            } else if(howtankStreamsNotification.isNotifyBackToNormal()
-                    && ( ( Result.ABORTED.toString().equalsIgnoreCase(build.getPreviousBuild().getResult().toString())
-                    || Result.FAILURE.toString().equalsIgnoreCase(build.getPreviousBuild().getResult().toString())
-                    || Result.UNSTABLE.toString().equalsIgnoreCase(build.getPreviousBuild().getResult().toString())
-                    || Result.NOT_BUILT.toString().equalsIgnoreCase(build.getPreviousBuild().getResult().toString())
-            ) && Result.SUCCESS.toString().equalsIgnoreCase(build.getResult().toString())
-            )
-            ) {
+            if(currentBuildResult != null) {
+                if (howtankStreamsNotification.isNotifyAborted()
+                        && Result.ABORTED.toString().equalsIgnoreCase(currentBuildResult.toString())) {
 
-                result = true;
+                    result = true;
 
-            } else if(howtankStreamsNotification.isNotifyFailure()
-                    && Result.FAILURE.toString().equalsIgnoreCase(build.getResult().toString())) {
+                } else if (previousBuildResult != null && howtankStreamsNotification.isNotifyBackToNormal()
+                        && ((Result.ABORTED.toString().equalsIgnoreCase(previousBuildResult.toString())
+                        || Result.FAILURE.toString().equalsIgnoreCase(previousBuildResult.toString())
+                        || Result.UNSTABLE.toString().equalsIgnoreCase(previousBuildResult.toString())
+                        || Result.NOT_BUILT.toString().equalsIgnoreCase(previousBuildResult.toString())
+                ) && Result.SUCCESS.toString().equalsIgnoreCase(currentBuildResult.toString())
+                )
+                ) {
 
-                result = true;
+                    result = true;
 
-            } else if(howtankStreamsNotification.isNotifyNotBuilt()
-                    && Result.NOT_BUILT.toString().equalsIgnoreCase(build.getResult().toString())) {
+                } else if (howtankStreamsNotification.isNotifyFailure()
+                        && Result.FAILURE.toString().equalsIgnoreCase(currentBuildResult.toString())) {
 
-                result = true;
-            } else if(howtankStreamsNotification.isNotifySuccess()
-                    && Result.SUCCESS.toString().equalsIgnoreCase(build.getResult().toString())) {
+                    result = true;
 
-                result = true;
+                } else if (howtankStreamsNotification.isNotifyNotBuilt()
+                        && Result.NOT_BUILT.toString().equalsIgnoreCase(currentBuildResult.toString())) {
 
-            } else if(howtankStreamsNotification.isNotifyUnstable()
-                    && Result.UNSTABLE.toString().equalsIgnoreCase(build.getResult().toString())) {
+                    result = true;
+                } else if (howtankStreamsNotification.isNotifySuccess()
+                        && Result.SUCCESS.toString().equalsIgnoreCase(currentBuildResult.toString())) {
 
-                result = true;
+                    result = true;
+
+                } else if (howtankStreamsNotification.isNotifyUnstable()
+                        && Result.UNSTABLE.toString().equalsIgnoreCase(currentBuildResult.toString())) {
+
+                    result = true;
+                }
             }
         }
         return result;
