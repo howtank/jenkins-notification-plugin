@@ -58,6 +58,8 @@ public class HowtankStreamService {
     Response publishHowtankStreamMessage(String streamId, String json) throws URISyntaxException {
         final String queryParam = buildHowtankApiCommandQuery(streamId, json);
 
+        log.info("Pushing stream message to: " + HOWTANK_BASE_API_URL + "?" + queryParam);
+
         return with()
                 .baseUri(HOWTANK_BASE_API_URL)
                 .contentType(ContentType.JSON)
