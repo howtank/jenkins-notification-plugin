@@ -1,5 +1,7 @@
-package com.howtank.jenkins;
+package com.howtank.jenkins.service;
 
+import com.howtank.jenkins.HowtankStreamsNotification;
+import com.howtank.jenkins.service.HowtankStreamService;
 import hudson.model.TaskListener;
 import org.junit.Before;
 import org.junit.Test;
