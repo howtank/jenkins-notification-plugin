@@ -194,7 +194,7 @@ public class HowtankStreamsNotification extends Notifier implements SimpleBuildS
         String plainAccessToken = null;
 
         if (this.accessToken.startsWith("id:")) {
-            StringCredentials stringCredentials = CredentialUtil.lookupCredentials(this.accessToken);
+            StringCredentials stringCredentials = CredentialUtil.lookupCredentials(this.accessToken.substring(3));
 
             if (stringCredentials != null) {
                 plainAccessToken = stringCredentials.getSecret().getPlainText();
