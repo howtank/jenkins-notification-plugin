@@ -57,6 +57,7 @@ public class HowtankStreamService {
         uriBuilder.addParameter("command", "add_stream_message");
         uriBuilder.addParameter("stream_id", streamId);
         uriBuilder.addParameter("local_id", "0");
+        uriBuilder.addParameter("mode", "expert");
         uriBuilder.addParameter("type", "group_chat");
         uriBuilder.addParameter("content", message);
 
