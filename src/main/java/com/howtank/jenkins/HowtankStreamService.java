@@ -13,6 +13,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+
 import static io.restassured.RestAssured.with;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -30,19 +33,26 @@ public class HowtankStreamService {
 
         String streamId = howtankStreamsNotification.getStreamId();
         String message = this.extractMessageFromJobExecution(run);
-        Response response = this.publishHowtankStreamMessage(streamId, message);
 
-        log.info("Howtank Notification Response: " + response.print());
+        try {
+            Response response = this.publishHowtankStreamMessage(streamId, message);
 
-        if(taskListener != null) {
-            taskListener.getLogger().println("Howtank Notification Response: " + response.print());
+            log.info("Howtank Notification Response: " + response.print());
+
+            if(taskListener != null) {
+                taskListener.getLogger().println("Howtank Notification Response: " + response.print());
+            }
+
+            return response.statusCode() == HttpStatus.SC_OK;
+
+        } catch (URISyntaxException e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
+            return false;
         }
-
-        return response.statusCode() == HttpStatus.SC_OK;
     }
 
 
-    String buildHowtankApiCommandQuery(String streamId, String message) {
+    String buildHowtankApiCommandQuery(String streamId, String message) throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder();
         uriBuilder.addParameter("command", "add_stream_message");
         uriBuilder.addParameter("stream_id", streamId);
@@ -50,10 +60,10 @@ public class HowtankStreamService {
         uriBuilder.addParameter("type", "group_chat");
         uriBuilder.addParameter("content", message);
 
-        return uriBuilder.getQueryParams().toString();
+        return uriBuilder.build().getRawQuery();
     }
 
-    Response publishHowtankStreamMessage(String streamId, String json) {
+    Response publishHowtankStreamMessage(String streamId, String json) throws URISyntaxException {
         final String queryParam = buildHowtankApiCommandQuery(streamId, json);
 
         return with()
