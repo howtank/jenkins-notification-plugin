@@ -64,7 +64,6 @@ public class HowtankStreamsNotification extends Notifier implements SimpleBuildS
     @DataBoundSetter
     private boolean notifyBackToNormal;
 
-
     @DataBoundConstructor
     public HowtankStreamsNotification(String streamId, String message, String accessToken) {
         this.streamId = streamId;

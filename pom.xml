@@ -13,11 +13,12 @@
 
     <groupId>com.howtank</groupId>
     <artifactId>jenkins-notification-plugin</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>hpi</packaging>
 
     <properties>
         <jenkins.version>2.164.1</jenkins.version>
+        <build.number>SNAPSHOT</build.number>
         <java.level>8</java.level>
     </properties>
 
@@ -115,11 +116,12 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}-${version}-${build.number}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.level}</source>
                     <target>${java.level}</target>
